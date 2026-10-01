@@ -53,19 +53,26 @@ func playCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		return nil
 	}
 
-	buildTrackMessage := func(status, emoji string) string {
-		escURL := html.EscapeString(currentTrack.URL)
-		escName := html.EscapeString(currentTrack.Name)
-		escUser := html.EscapeString(currentTrack.User)
-		return fmt.Sprintf("%s <b>%s</b>\n\n<tg-emoji emoji-id=\"5895444149699612825\">🎵</tg-emoji> <b>Track:</b> <a href='%s'>%s</a>\n<tg-emoji emoji-id=\"5893149782465057649\">⏱</tg-emoji> <b>Duration:</b> %s\n<tg-emoji emoji-id=\"5292226786229236118\">👤</tg-emoji> <b>Requested by:</b> %s",
-			emoji, status,
-			escURL, escName,
-			utils.SecToMin(currentTrack.Duration),
-			escUser,
-		)
-	}
+	buildTrackMessage := func(status, statusEmoji string) string {
+        escURL := html.EscapeString(currentTrack.URL)
+        escName := html.EscapeString(currentTrack.Name)
+        escUser := html.EscapeString(currentTrack.User)
 
-	switch {
+        return fmt.Sprintf(
+                "<tg-emoji emoji-id=\"%s\">🎵</tg-emoji> <b>%s</b>
+
+<tg-emoji emoji-id=\"5895444149699612825\">🎵</tg-emoji> <b>Track:</b> <a href='%s'>%s</a>
+<tg-emoji emoji-id=\"5893149782465057649\">⏱</tg-emoji> <b>Duration:</b> %s
+<tg-emoji emoji-id=\"5292226786229236118\">👤</tg-emoji> <b>Requested by:</b> %s",
+                statusEmoji,
+                status,
+                escURL,
+                escName,
+                utils.SecToMin(currentTrack.Duration),
+                escUser,
+        )
+}
+        switch {
 	case strings.Contains(data, "play_skip"):
 		if err := vc.Calls.PlayNext(c, chatID); err != nil {
 			_ = cb.Answer(c, 0, false, "Unable to skip the current track.", "")
@@ -95,7 +102,9 @@ func playCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 			return nil
 		}
 		_ = cb.Answer(c, 0, false, "Playback paused.", "")
-		text := buildTrackMessage("Paused", "<tg-emoji emoji-id=\"5893081007153746175\">⏸</tg-emoji>") + fmt.Sprintf("\n\nPaused by %s", html.EscapeString(user.FirstName))
+		text := buildTrackMessage("Paused", "5893081007153746175") + fmt.Sprintf("
+
+<tg-emoji emoji-id=\"5258113901106580375\">🔹</tg-emoji> <b>Paused by:</b> %s", html.EscapeString(user.FirstName))
 		_, _ = cb.EditMessageText(c, text, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("pause"), ParseMode: "HTML", DisableWebPagePreview: true})
 		return nil
 
@@ -106,7 +115,9 @@ func playCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 			return nil
 		}
 		_ = cb.Answer(c, 0, false, "Playback resumed.", "")
-		text := buildTrackMessage("Now Playing", "<tg-emoji emoji-id=\"5334665104677941170\">▶</tg-emoji>") + fmt.Sprintf("\n\nResumed by %s", html.EscapeString(user.FirstName))
+		text := buildTrackMessage("Now Playing", "5334665104677941170") + fmt.Sprintf("
+
+<tg-emoji emoji-id=\"5222472119295684375\">🔹</tg-emoji> <b>Resumed by:</b> %s", html.EscapeString(user.FirstName))
 		_, _ = cb.EditMessageText(c, text, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("resume"), ParseMode: "HTML", DisableWebPagePreview: true})
 		return nil
 

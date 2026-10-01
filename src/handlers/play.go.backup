@@ -26,8 +26,6 @@ import (
 
 // playHandler handles the /play command.
 func playHandler(c *td.Client, m *td.Message) error {
-	// Delete the user's /play command immediately.
-	_ = c.DeleteMessages(m.ChatId, []int64{m.Id}, &td.DeleteMessagesOpts{Revoke: true})
 	if !playMode(c, m) {
 		return td.EndGroups
 	}
@@ -148,7 +146,7 @@ func handlePlay(c *td.Client, m *td.Message, isVideo bool, force bool) error {
 		return td.EndGroups
 	}
 
-	updater, err := m.ReplyText(c, `<tg-emoji emoji-id="5258274739041883702">🔍</tg-emoji> Searching and downloading...`, &td.SendTextMessageOpts{ParseMode: "HTML"})
+	updater, err := m.ReplyText(c, "🔍 Searching and downloading...", nil)
 	if err != nil {
 		c.Logger.Warn("failed to send message", "error", err)
 		return td.EndGroups
@@ -233,10 +231,10 @@ func handleMedia(c *td.Client, m *td.Message, updater *td.Message, dlMsg *td.Mes
 		escName := html.EscapeString(saveCache.Name)
 		escUser := html.EscapeString(saveCache.User)
 		queueInfo := fmt.Sprintf(
-			"<u><b>Added to queue: %d</b></u>\n\n<tg-emoji emoji-id=\"5893297890117292323\">🔤</tg-emoji> <b>Title:</b> <a href='%s'>%s</a>\n\n<tg-emoji emoji-id=\"5893149782465057649\">⏱</tg-emoji> <b>Duration:</b> %s min\n<tg-emoji emoji-id=\"5292226786229236118\">👤</tg-emoji> <b>Requested by:</b> %s",
+			"<u><b>Added to queue: %d</b></u>\n\n<b>Title:</b> <a href='%s'>%s</a>\n\n<b>Duration:</b> %s min\n<b>Requested by:</b> %s",
 			qLen, escURL, escName, utils.SecToMin(saveCache.Duration), escUser,
 		)
-		_, err := updater.EditText(c, queueInfo, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("queue"), ParseMode: "HTML", DisableWebPagePreview: true})
+		_, err := updater.EditText(c, queueInfo, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("play"), ParseMode: "HTML", DisableWebPagePreview: true})
 		return err
 	}
 
@@ -266,7 +264,7 @@ func handleMedia(c *td.Client, m *td.Message, updater *td.Message, dlMsg *td.Mes
 	escUser := html.EscapeString(saveCache.User)
 
 	nowPlaying := fmt.Sprintf(
-		"<u><b>Started streaming</b></u>\n\n<tg-emoji emoji-id=\"5893297890117292323\">🔤</tg-emoji> <b>Title:</b> <a href='%s'>%s</a>\n\n<tg-emoji emoji-id=\"5893149782465057649\">⏱</tg-emoji> <b>Duration:</b> %s min\n<tg-emoji emoji-id=\"5292226786229236118\">👤</tg-emoji> <b>Requested by:</b> %s",
+		"<u><b>| Started streaming</b></u>\n\n<b>Title:</b> <a href='%s'>%s</a>\n\n<b>Duration:</b> %s min\n<b>Requested by:</b> %s",
 		escURL, escName, utils.SecToMin(saveCache.Duration), escUser,
 	)
 
@@ -345,11 +343,11 @@ func handleSingleTrack(c *td.Client, m *td.Message, updater *td.Message, song ut
 		escName := html.EscapeString(saveCache.Name)
 		escUser := html.EscapeString(saveCache.User)
 		queueInfo := fmt.Sprintf(
-			"<u><b>Added to queue: %d</b></u>\n\n<tg-emoji emoji-id=\"5893297890117292323\">🔤</tg-emoji> <b>Title:</b> <a href='%s'>%s</a>\n\n<tg-emoji emoji-id=\"5893149782465057649\">⏱</tg-emoji> <b>Duration:</b> %s min\n<tg-emoji emoji-id=\"5292226786229236118\">👤</tg-emoji> <b>Requested by:</b> %s",
+			"<u><b>Added to queue: %d</b></u>\n\n<b>Title:</b> <a href='%s'>%s</a>\n\n<b>Duration:</b> %s min\n<b>Requested by:</b> %s",
 			qLen, escURL, escName, utils.SecToMin(saveCache.Duration), escUser,
 		)
 
-		_, err := updater.EditText(c, queueInfo, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("queue"), ParseMode: "HTML", DisableWebPagePreview: true})
+		_, err := updater.EditText(c, queueInfo, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("play"), ParseMode: "HTML", DisableWebPagePreview: true})
 		return err
 	}
 
@@ -375,7 +373,7 @@ func handleSingleTrack(c *td.Client, m *td.Message, updater *td.Message, song ut
 	escUsernp := html.EscapeString(saveCache.User)
 
 	nowPlaying := fmt.Sprintf(
-		"<u><b>Started streaming</b></u>\n\n<tg-emoji emoji-id=\"5893297890117292323\">🔤</tg-emoji> <b>Title:</b> <a href='%s'>%s</a>\n\n<tg-emoji emoji-id=\"5893149782465057649\">⏱</tg-emoji> <b>Duration:</b> %s min\n<tg-emoji emoji-id=\"5292226786229236118\">👤</tg-emoji> <b>Requested by:</b> %s",
+		"<u><b>| Started streaming</b></u>\n\n<b>Title:</b> <a href='%s'>%s</a>\n\n<b>Duration:</b> %s min\n<b>Requested by:</b> %s",
 		escURLnp, escNamenp, utils.SecToMin(song.Duration), escUsernp,
 	)
 
@@ -470,7 +468,7 @@ func handleMultipleTracks(c *td.Client, m *td.Message, updater *td.Message, trac
 	sb.WriteString("</blockquote>")
 	escRequester := html.EscapeString(firstName(c, m))
 	queueSummary := fmt.Sprintf(
-		"\n<b>Queue Total:</b> %d\n<tg-emoji emoji-id=\"5893149782465057649\">⏱</tg-emoji> <b>Duration:</b> %s min\n<tg-emoji emoji-id=\"5292226786229236118\">👤</tg-emoji> <b>Requested by:</b> %s",
+		"\n<b>Queue Total:</b> %d\n<b>Duration:</b> %s min\n<b>Requested by:</b> %s",
 		qLenAfter, utils.SecToMin(totalDuration), escRequester,
 	)
 

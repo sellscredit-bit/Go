@@ -24,18 +24,6 @@ func cb(text, data string) gotdbot.InlineKeyboardButton {
 	}
 }
 
-func cbCustom(text, data string, emojiID int64) gotdbot.InlineKeyboardButton {
-	btn := cb(text, data)
-	btn.IconCustomEmojiId = emojiID
-	return btn
-}
-
-func urlCustom(text, link string, emojiID int64) gotdbot.InlineKeyboardButton {
-	btn := url(text, link)
-	btn.IconCustomEmojiId = emojiID
-	return btn
-}
-
 // cbStyled is cb() with an explicit button Style (Bot API 10.3's colored
 // bot buttons - default/primary/success/danger/link).
 func cbStyled(text, data string, style gotdbot.ButtonStyle) gotdbot.InlineKeyboardButton {
@@ -64,14 +52,14 @@ func urlPrimary(text, link string) gotdbot.InlineKeyboardButton {
 }
 
 var CloseBtn = cbStyled("Close", "vcplay_close", gotdbot.ButtonStyleDanger{})
-var HomeBtn = cbStyled("Home", "help_back", gotdbot.ButtonStylePrimary{})
-var HelpBtn = cbStyled("Help", "help_all", gotdbot.ButtonStylePrimary{})
-var UserBtn = cbStyled("Users", "help_user", gotdbot.ButtonStylePrimary{})
-var AdminBtn = cbStyled("Admins", "help_admin", gotdbot.ButtonStylePrimary{})
-var OwnerBtn = cbStyled("Owner", "help_owner", gotdbot.ButtonStylePrimary{})
-var DevsBtn = cbStyled("Devs", "help_devs", gotdbot.ButtonStylePrimary{})
-var PlaylistBtn = cbStyled("Playlist", "help_playlist", gotdbot.ButtonStylePrimary{})
-var AutoplayBtn = cbStyled("Autoplay", "help_autoplay", gotdbot.ButtonStylePrimary{})
+var HomeBtn = cb("Home", "help_back")
+var HelpBtn = cb("Help", "help_all")
+var UserBtn = cb("Users", "help_user")
+var AdminBtn = cb("Admins", "help_admin")
+var OwnerBtn = cb("Owner", "help_owner")
+var DevsBtn = cb("Devs", "help_devs")
+var PlaylistBtn = cb("Playlist", "help_playlist")
+var AutoplayBtn = cb("Autoplay", "help_autoplay")
 
 func SupportKeyboard() *gotdbot.ReplyMarkupInlineKeyboard {
 
@@ -117,67 +105,60 @@ func BackHelpMenuKeyboard() *gotdbot.ReplyMarkupInlineKeyboard {
 }
 
 func ControlButtons(mode string) *gotdbot.ReplyMarkupInlineKeyboard {
-	skipBtn := cbCustom("Skip", "play_skip", 5472235990955334730)
-	skipBtn.Style = gotdbot.ButtonStylePrimary{}
-	stopBtn := cbCustom("Stop", "play_stop", 5472201536727686043)
-	stopBtn.Style = gotdbot.ButtonStylePrimary{}
-	pauseBtn := cbCustom("Pause", "play_pause", 5474288573005964288)
-	pauseBtn.Style = gotdbot.ButtonStylePrimary{}
-	resumeBtn := cbCustom("Resume", "play_resume", 5467470746215292572)
-	resumeBtn.Style = gotdbot.ButtonStylePrimary{}
-	muteBtn := cbCustom("", "play_mute", 5354963498075960423)
-	unmuteBtn := cbCustom("", "play_unmute", 5352938317916683303)
-	closeBtn := cbCustom("Close", "vcplay_close", 5417876320761696693)
-	closeBtn.Style = gotdbot.ButtonStyleDanger{}
-	addToPlaylistBtn := urlPrimary("Add Me  +", "https://t.me/YoutubeTunesbot?startgroup=true")
-	addToPlaylistBtn.Style = gotdbot.ButtonStyleSuccess{}
+	skipBtn := cb("‣‣I", "play_skip")
+	stopBtn := cb("▢", "play_stop")
+	pauseBtn := cb("II", "play_pause")
+	resumeBtn := cb("▷", "play_resume")
+	muteBtn := cb("🔇", "play_mute")
+	unmuteBtn := cb("🔊", "play_unmute")
+	addToPlaylistBtn := cbStyled("➕", "play_add_to_list", gotdbot.ButtonStylePrimary{})
 
 	switch mode {
+
 	case "play":
 		return &gotdbot.ReplyMarkupInlineKeyboard{
 			Rows: [][]gotdbot.InlineKeyboardButton{
 				{skipBtn, stopBtn, pauseBtn},
-				{addToPlaylistBtn, closeBtn},
+				{addToPlaylistBtn, CloseBtn},
 			},
 		}
-	case "queue":
-		return &gotdbot.ReplyMarkupInlineKeyboard{
-			Rows: [][]gotdbot.InlineKeyboardButton{
-				{addToPlaylistBtn, closeBtn},
-			},
-		}
+
 	case "pause":
 		return &gotdbot.ReplyMarkupInlineKeyboard{
 			Rows: [][]gotdbot.InlineKeyboardButton{
 				{skipBtn, stopBtn, resumeBtn},
-				{closeBtn},
+				{CloseBtn},
 			},
 		}
+
 	case "resume":
 		return &gotdbot.ReplyMarkupInlineKeyboard{
 			Rows: [][]gotdbot.InlineKeyboardButton{
 				{skipBtn, stopBtn, pauseBtn},
-				{closeBtn},
+				{CloseBtn},
 			},
 		}
+
 	case "mute":
 		return &gotdbot.ReplyMarkupInlineKeyboard{
 			Rows: [][]gotdbot.InlineKeyboardButton{
 				{skipBtn, stopBtn, unmuteBtn},
-				{closeBtn},
+				{CloseBtn},
 			},
 		}
+
 	case "unmute":
 		return &gotdbot.ReplyMarkupInlineKeyboard{
 			Rows: [][]gotdbot.InlineKeyboardButton{
 				{skipBtn, stopBtn, muteBtn},
-				{closeBtn},
+				{CloseBtn},
 			},
 		}
+
 	default:
 		return &gotdbot.ReplyMarkupInlineKeyboard{
 			Rows: [][]gotdbot.InlineKeyboardButton{
-				{closeBtn},
+				{CloseBtn},
 			},
 		}
 	}
@@ -211,22 +192,16 @@ var StartBackBtn = cb("Back", "setup_back")
 // PrivateStartMarkup builds the keyboard shown for /start in a private chat.
 // Mirrors: Add to Group, Help & Commands, Support Chat / Updates, Setup Guide.
 func PrivateStartMarkup(username string) *gotdbot.ReplyMarkupInlineKeyboard {
-	addToGroupBtn := urlPrimary("➕  Add to Group", fmt.Sprintf("https://t.me/%s?startgroup=true", username))
-	helpBtn := cbCustom("Help", "help_all", 5258023599419171861)
-	helpBtn.Style = gotdbot.ButtonStyleDanger{}
-	supportBtn := urlCustom("Support Chat", config.SupportGroup, 5276089339967716971)
-	supportBtn.Style = gotdbot.ButtonStyleSuccess{}
-	updatesBtn := urlCustom("Updates", config.SupportChannel, 5307943162486994719)
-	updatesBtn.Style = gotdbot.ButtonStyleSuccess{}
-	ownerBtn := urlCustom("Owner", "https://t.me/Thegrime", 5208878706717636743)
-	ownerBtn.Style = gotdbot.ButtonStyleDanger{}
+	addToGroupBtn := urlPrimary("➕ Add to Group", fmt.Sprintf("https://t.me/%s?startgroup=true", username))
+	supportBtn := url("Support Chat", config.SupportGroup)
+	updatesBtn := url("Updates", config.SupportChannel)
 
 	return &gotdbot.ReplyMarkupInlineKeyboard{
 		Rows: [][]gotdbot.InlineKeyboardButton{
 			{addToGroupBtn},
-			{helpBtn},
+			{HelpBtn},
 			{supportBtn, updatesBtn},
-			{ownerBtn},
+			{SetupGuideBtn},
 		},
 	}
 }

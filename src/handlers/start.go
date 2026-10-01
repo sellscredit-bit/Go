@@ -66,7 +66,7 @@ func privateWelcomeText(name, botName string) string {
 			"<p><b>Supported platforms:</b> YouTube, Spotify, Apple Music, SoundCloud, Deezer, JioSaavn and more.</p>"+
 			"<p>Use the buttons below to add %s to your group, or explore everything it can do.</p>",
 		config.StartImg,
-		headingBlock(3, fmt.Sprintf("Welcome, %s! 👋", escName)),
+		headingBlock(3, fmt.Sprintf("Welcome, %s! <tg-emoji emoji-id=\"5208748315805499400\">👋</tg-emoji>", escName)),
 		escBotName, escBotName,
 	)
 }
@@ -86,6 +86,10 @@ func groupWelcomeText(botName, uptime string) string {
 
 // startHandler handles the /start command.
 func startHandler(c *td.Client, m *td.Message) error {
+	if handled, err := handleVerifyStart(c, m); handled {
+		return err
+	}
+
 	chatID := m.ChatId
 
 	if m.IsPrivate() {
@@ -107,7 +111,6 @@ func startHandler(c *td.Client, m *td.Message) error {
 	_, err := replyRich(c, m, text, core.GroupWelcomeMarkup())
 	return err
 }
-
 
 func setupGuideText(botName string) string {
 	escBotName := html.EscapeString(botName)

@@ -53,20 +53,29 @@ func downloadViaWrapper(cached *utils.CachedTrack, dlBot *td.Client) (string, er
 		return "", fmt.Errorf("invalid cached URL: %s", cached.URL)
 	}
 
-	track, err := wrapper.GetTrack()
-	if err != nil {
-		return "", fmt.Errorf("get track info: %w", err)
+	// The track was already resolved before being added to the queue.
+	// Re-resolving it here causes another YouTube search/metadata lookup.
+	track := utils.TrackInfo{
+		Id:       cached.TrackID,
+		URL:      cached.URL,
+		Platform: cached.Platform,
+	}
+
+	if track.Id == "" {
+		var err error
+		track, err = wrapper.GetTrack()
+		if err != nil {
+			return "", fmt.Errorf("get track info: %w", err)
+		}
 	}
 
 	path, err := wrapper.DownloadTrack(track, cached.IsVideo)
 	if err != nil {
 		return "", err
 	}
-
 	if utils.TelegramMessageRegex.MatchString(path) {
 		return downloadFromTelegramMessage(dlBot, path)
 	}
-
 	return path, nil
 }
 

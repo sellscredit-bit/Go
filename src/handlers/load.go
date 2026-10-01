@@ -98,6 +98,7 @@ func LoadModules(c *gotdbot.Client) {
 	c.OnUpdateNewCallbackQuery(pauseCallbackHandler, callbackquery.Equal("playback_pause_toggle"))
 	c.OnUpdateNewCallbackQuery(backupDeleteCallbackHandler, callbackquery.Equal("backup_delete"))
 
+	c.OnUpdateNewChatJoinRequest(handleChatJoinRequest, nil)
 	c.OnUpdateChatMember(handleParticipant, nil)
 	c.OnUpdateNewMessage(handleVoiceChatMessage, nil)
 	c.OnUpdateNewGuestQuery(guestQueryHandler, nil)

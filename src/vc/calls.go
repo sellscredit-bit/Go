@@ -123,7 +123,7 @@ func (c *TelegramCalls) playSong(bot *td.Client, chatID int64, song *utils.Cache
 	c.schedulePrefetch(bot, chatID, song.Duration)
 
 	text := fmt.Sprintf(
-		"<u><b>| Started streaming</b></u>\n\n<b>Title:</b> <a href='%s'>%s</a>\n\n<b>Duration:</b> %s min\n<b>Requested by:</b> %s",
+		"<u><b><tg-emoji emoji-id=\"5334665104677941170\">▶</tg-emoji> Started streaming</b></u>\n\n<tg-emoji emoji-id=\"5893297890117292323\">🔤</tg-emoji> <b>Title:</b> <a href='%s'>%s</a>\n\n<tg-emoji emoji-id=\"5893149782465057649\">⏱</tg-emoji> <b>Duration:</b> %s min\n<tg-emoji emoji-id=\"5292226786229236118\">👤</tg-emoji> <b>Requested by:</b> %s",
 		html.EscapeString(song.URL),
 		html.EscapeString(song.Name),
 		utils.SecToMin(song.Duration),

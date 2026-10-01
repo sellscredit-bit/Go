@@ -181,7 +181,7 @@ func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		_ = cb.Answer(c, 0, false, "Opening help menu...", "")
 		response := fmt.Sprintf(
 			"%s\nHello %s, pick a category below to see what I can do.\n\n<b>Supported platforms:</b> YouTube, Spotify, Apple Music, SoundCloud, Deezer, JioSaavn and more.",
-			headingBlock(3, fmt.Sprintf("📖 %s — Help Menu", html.EscapeString(c.Me.FirstName))),
+			headingBlock(3, fmt.Sprintf("<tg-emoji emoji-id=\"5372849966689566579\">📖</tg-emoji> %s — Help Menu", html.EscapeString(c.Me.FirstName))),
 			html.EscapeString(user.FirstName),
 		)
 		_, err := editRichByID(c, cb.ChatId, cb.MessageId, response, core.HelpMenuKeyboard())

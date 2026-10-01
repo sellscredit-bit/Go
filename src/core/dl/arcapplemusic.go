@@ -105,11 +105,11 @@ type arcAppleMusicTrack struct {
 
 // arcAppleMusicSearchResponse models the response of /applemusic/search.
 type arcAppleMusicSearchResponse struct {
-	Success bool                  `json:"success"`
-	Type    string                `json:"type"`
-	Url     string                `json:"url"`
-	Total   int                   `json:"total"`
-	Tracks  []arcAppleMusicTrack  `json:"tracks"`
+	Success bool                 `json:"success"`
+	Type    string               `json:"type"`
+	Url     string               `json:"url"`
+	Total   int                  `json:"total"`
+	Tracks  []arcAppleMusicTrack `json:"tracks"`
 }
 
 // arcAppleMusicDownloadResponse models the response of
@@ -227,12 +227,12 @@ func (a *arcAppleMusic) getCollectionInfo() (utils.PlatformTracks, error) {
 			continue
 		}
 		tracks = append(tracks, utils.MusicTrack{
-			Title:    t.Title,
-			Url:      t.TrackUrl,
+			Title:     t.Title,
+			Url:       t.TrackUrl,
 			Thumbnail: t.Thumbnail,
-			Duration: durationToSeconds(t.Duration),
-			Channel:  t.Artist,
-			Platform: utils.Apple,
+			Duration:  durationToSeconds(t.Duration),
+			Channel:   t.Artist,
+			Platform:  utils.Apple,
 		})
 	}
 

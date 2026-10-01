@@ -77,31 +77,7 @@ func (a *Assistant) Play(ctx context.Context, chatId int64, mediaDescription ntg
 	defer unlock()
 
 	if a.isLive(chatId) {
-
-		start := time.Now()
-
-		err := a.binding.SetStreamSources(
-
-			chatId,
-
-			ntgcalls.CaptureStream,
-
-			mediaDescription,
-		)
-
-		a.App.Log.Infof(
-
-			"[VC] SetStreamSources chat=%d took=%s err=%v",
-
-			chatId,
-
-			time.Since(start),
-
-			err,
-		)
-
-		return err
-
+		return a.binding.SetStreamSources(chatId, ntgcalls.CaptureStream, mediaDescription)
 	}
 	if err := a.connectCall(ctx, chatId, mediaDescription, ""); err != nil {
 		return err

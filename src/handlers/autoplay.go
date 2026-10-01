@@ -31,7 +31,7 @@ func autoplayHandler(c *td.Client, m *td.Message) error {
 	}
 
 	state := cache.ChatCache.GetAutoplay(chatID)
-	_, err := replyButtonRich(c, m, "🔁 Autoplay Control", autoplayText(), autoplayButton(state))
+	_, err := replyButtonRich(c, m, "<tg-emoji emoji-id=\"5902432207519093015\">🔁</tg-emoji> Autoplay Control", autoplayText(), autoplayButton(state))
 	return err
 }
 
@@ -51,7 +51,7 @@ func autoplayCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error 
 	newState := !state
 	cache.ChatCache.SetAutoplay(chatID, newState)
 
-	if _, err := editButtonRichByID(c, cb.ChatId, cb.MessageId, "🔁 Autoplay Control", autoplayText(), autoplayButton(newState)); err != nil {
+	if _, err := editButtonRichByID(c, cb.ChatId, cb.MessageId, "<tg-emoji emoji-id=\"5902432207519093015\">🔁</tg-emoji> Autoplay Control", autoplayText(), autoplayButton(newState)); err != nil {
 		c.Logger.Warn("Failed to edit autoplay message", "error", err)
 	}
 

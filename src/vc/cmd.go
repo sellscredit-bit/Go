@@ -53,7 +53,7 @@ func getMediaDescription(filePath string, isVideo bool, ffmpegParameters string)
 		audioCmd.WriteString(filterFlags + " ")
 	}
 
-	audioCmd.WriteString(fmt.Sprintf("-f s16le -ac %d -ar %d -v quiet pipe:1",
+	audioCmd.WriteString(fmt.Sprintf("-f s16le -ac %d -ar %d -flush_packets 1 -fflags nobuffer -v quiet pipe:1",
 		audioDescription.ChannelCount,
 		audioDescription.SampleRate,
 	))
